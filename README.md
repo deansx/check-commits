@@ -54,7 +54,7 @@ Repo Contents
 * **check-commits** - main executable script
 * check_commits/ - library containing modules for import
 * check_commits/check_commits.py - module containing most of the code
-* check_commits/`__init__`.py
+* check_commits/\__init\__.py
 * chk-cmt-tst-commit-recs-ref.txt - reference file for testing
 * chk-cmt-tst-ref.csv - reference file for testing
 * chk-cmt-tst.dft - test file that marks some commits as defects
