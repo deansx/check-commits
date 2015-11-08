@@ -1,0 +1,39 @@
+#!/bin/bash
+# Installs the check-commits script, along with the corresponding library
+# module(s) into appropriate directories for a Linux distribution
+# No arguments, no return values
+
+# NOTE: You may need elevated priviledges to perform the install
+
+# Library of interest
+LIBNM=check_commits
+
+# Directories to recieve the copied files. You may want to modify these
+CMDDIR=/usr/local/bin
+PYVER=$(readlink /usr/bin/python3)
+PYDIR="/usr/local/lib/$PYVER/dist-packages/$LIBNM"
+
+# Local directory holding the shared modules
+LOCDIR="./$LIBNM"
+
+echo -e "\nCopying command(s) to $CMDDIR ...\n"
+CMDS=('check-commits')
+for f in "${CMDS[@]}"; do
+    cp -v ./$f $CMDDIR/$f
+done
+
+echo -e "\nCopying shared modules to $PYDIR ...\n"
+if [ -d $PYDIR ]; then
+    echo "$PYDIR already exists..."
+    echo "   ... will just copy files"
+else
+    echo "Creating $PYDIR..."
+    mkdir $PYDIR
+fi    
+
+MODS=('check_commits.py' '__init__.py')
+for f in "${MODS[@]}"; do
+    cp -v $LOCDIR/$f $PYDIR/$f
+done
+
+echo -e "\nInstallation Complete!\n"

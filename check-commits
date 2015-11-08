@@ -1,0 +1,92 @@
+#!/usr/bin/python3
+"""check-commits retrieves commit information from a git repo and produces
+json (and, optionally, CSV) that can be used elsewhere in the defect analysis
+flow.
+
+Usage: check-commits [path_to_repo] -[Hh][elp]
+
+The script takes one optional argument which specifies the pathname to the
+repo that is to be analyzed. If the repo path is not specified, the current
+working directory is used as the default.
+
+The JSON formatted string generated as a result of running this script is
+written to a file, in the current working directory, named:
+
+    <repo_name>.json
+
+Note that 'repo_name' is extracted from the repo itself, but will generally
+be the leaf of the pathname to the repo.
+
+The script also supports the option to produce a CSV file named:
+
+    <repo_name>.csv
+
+The generation of the CSV file is gated by the global variable: GEN_CSV
+
+Although this script tries to use heuristics to determine which commits
+correspond to defects, this tactic still requires refinement. Further, some
+teams may not be annotating commit messages with information that readily
+identifies the transactions as addressing a defect.  Therefore, the script
+also has the ability to read a list of commit SHA-1's that identify commits
+that address defects. The file format is straightforward, it's a simple text
+file with each line containing exactly one 40 character SHA-1.  The script
+looks in the current working directory for an optional file named:
+
+    <repo_name>.dft
+
+If this "helper" file is not readable, the program proceeds without the
+additional information, which could result in some commits being incorrectly
+tagged as not being associated with defect repair.
+
+
+Copyright 2015 Grip QA
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+"""
+
+__author__ = "Dean Stevens"
+__copyright__ = "Copyright 2015, Grip QA"
+__license__ = "Apache License, Version 2.0"
+__status__ = "Prototype"
+__version__ = "0.0.1"
+
+import sys
+import os
+import argparse
+
+from check_commits import check_commits
+
+if __name__ == '__main__':
+    
+    # If no path is specified as an argument, we'll try to use the current
+    # working directory
+    default_path = os.getcwd()
+
+    # argparse lets us provide both a default value and help text
+    help_str = ("Pathname to the git repo, if absent "
+                "will use the current dir '{0}'").format(default_path)
+    parser = argparse.ArgumentParser(
+                      description=__doc__
+                     ,formatter_class=argparse.RawDescriptionHelpFormatter
+                     )
+    parser.add_argument("repo_path"
+                        ,nargs='?'
+                        ,default=default_path
+                        ,help=help_str
+                        )
+
+    repo_path = parser.parse_args().repo_path
+    sys.stdout.write("Processing repo: " + repo_path + '\n')
+    check_commits.process_commits(repo_path)
+

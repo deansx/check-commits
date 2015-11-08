@@ -1,0 +1,3 @@
+#!/bin/bash
+diff -s chk-cmt-tst-commit-recs-ref.txt chk-cmt-tst-commit-recs.txt
+diff -s chk-cmt-tst-ref.csv chk-cmt-tst.csv
