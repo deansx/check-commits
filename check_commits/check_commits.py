@@ -3,9 +3,10 @@ json, and optionally CSV, that can be used elsewhere in the defect analysis
 flow.
 
 The primary entry point for this module is the check_commits() function. This
-function takes one required argument, which specifies the pathname to the
+function takes two required arguments. The first specifies the pathname to the
 repo that is to be analyzed. If the repo path is not specified, the current
-working directory is used as the default.
+working directory is used as the default. The second provides the name of 
+the owner of the repository on GitHub or other shared systems.
 
 The JSON formatted string generated as a result of running this script is
 written to a file, in the current working directory, named:
@@ -96,6 +97,7 @@ class CommitRec(object):
         is_defect - whether the commit is associated with fixing a defect
     """
     __slots__ = [ "repo"
+                 ,"owner"
                  ,"timestamp"
                  ,"commit"
                  ,"file"
@@ -115,6 +117,7 @@ class CommitRec(object):
 
     def __init__( self
                  ,repo
+                 ,owner
                  ,timestamp=0
                  ,commit=0
                  ,file=None
@@ -130,6 +133,7 @@ class CommitRec(object):
         value for every record in the run
         """
         self.repo          = repo
+        self.owner         = owner
         self.timestamp     = timestamp
         self.commit        = commit
         self.file          = file
@@ -378,6 +382,7 @@ class CommitRec(object):
             as this object, with the exceptions listed above.
         """
         return CommitRec( self.repo
+                         ,self.owner
                          ,self.timestamp
                          ,self.commit
                          ,author=self.author
@@ -475,7 +480,7 @@ def find_commits(log):
             if CommitRec.COMMIT_REGEX.match(x) is not None]
 
 
-def proc_commits(log, commits, repo_name):
+def proc_commits(log, commits, repo_name, repo_owner):
     """Process the git log and extracts the information that we need.
 
     We process the log in chunks, each of which represents a single commit.
@@ -489,6 +494,8 @@ def proc_commits(log, commits, repo_name):
                     list points to the starting element of a commit's
                     information in the log
         repo_name - str containing the name of the repo that we're processing
+        repo_owner - str specifying the owner of the GitHub (or other shared
+                    system) repo
     Returns:
         The list of CommitRec ojbects that were generated during processing
     """
@@ -524,7 +531,7 @@ def proc_commits(log, commits, repo_name):
             the commit.
         """
         # Initialize the first CommitRec object
-        commit_rec = CommitRec(repo_name)
+        commit_rec = CommitRec(repo_name, repo_owner)
 
         # Parse the block of lines to extract the commit SHA-1, since this
         # is a block of commits, the record should be the first one in
@@ -602,7 +609,7 @@ def proc_commits(log, commits, repo_name):
     return commit_recs
 
 
-def process_commits(repo_path):
+def process_commits(repo_path, repo_owner):
     """Main function to process a Git repo
 
     Retrieves commit information from a Git repo. This function coordinates
@@ -614,6 +621,8 @@ def process_commits(repo_path):
     Args:
         repo_path - str with the filesystem pathname to the repo that is to 
                     be processed
+        repo_owner - str specifying the owner of the GitHub (or other shared
+                    system) repo
     """
     # Get the name of the repo from the target repo itself by using:
     # git rev-parse --show-toplevel, then getting the leaf name of the
@@ -636,7 +645,7 @@ def process_commits(repo_path):
     # Does the actual processing of the log and generates a list of
     # "CommitRec" objects, each of which represents a file involved in a
     # commit.
-    commit_files = proc_commits(log, commits, repo_name)
+    commit_files = proc_commits(log, commits, repo_name, repo_owner)
 
     # for c in commit_files:
     #     print(c)

@@ -3,11 +3,17 @@
 json (and, optionally, CSV) that can be used elsewhere in the defect analysis
 flow.
 
-Usage: check-commits [path_to_repo] -[Hh][elp]
+Usage: check-commits [-h] [repo_path] [-owner OWNER]
 
-The script takes one optional argument which specifies the pathname to the
-repo that is to be analyzed. If the repo path is not specified, the current
-working directory is used as the default.
+The script takes three optional arguments:
+    [repo_path]     specifies the pathname to the repo that is to be analyzed
+                    analyzed. If the repo path is not specified, the current
+                    working directory is used as the default.
+
+    [-owner OWNER]  specifies the name of the owner of the repository on
+                    GitHub or other shared systems (technically, counts as
+                    two arguments). If the owner isn't specified, a default
+                    value is used for output.
 
 The JSON formatted string generated as a result of running this script is
 written to a file, in the current working directory, named:
@@ -72,21 +78,33 @@ if __name__ == '__main__':
     # If no path is specified as an argument, we'll try to use the current
     # working directory
     default_path = os.getcwd()
+    default_owner = ["unknown_owner"]
 
     # argparse lets us provide both a default value and help text
-    help_str = ("Pathname to the git repo, if absent "
+    repo_help = ("Pathname to the git repo, if absent "
                 "will use the current dir '{0}'").format(default_path)
+    owner_help = ("Owner of the corresponding GitHub repo, if unspecified "
+                  "will display as '{0}' in output").format(default_owner[0])
     parser = argparse.ArgumentParser(
                       description=__doc__
                      ,formatter_class=argparse.RawDescriptionHelpFormatter
                      )
-    parser.add_argument("repo_path"
+    parser.add_argument( "repo_path"
                         ,nargs='?'
                         ,default=default_path
-                        ,help=help_str
+                        ,help=repo_help
                         )
+    parser.add_argument( "-owner"
+                        ,nargs=1
+                        ,default=default_owner
+                        ,help=owner_help
+                       )
 
     repo_path = parser.parse_args().repo_path
+    repo_owner = parser.parse_args().owner[0]
     sys.stdout.write("Processing repo: " + repo_path + '\n')
-    check_commits.process_commits(repo_path)
+    check_commits.process_commits(repo_path, repo_owner)
 
+# Local Variables:
+# mode: python
+# End:
