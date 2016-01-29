@@ -633,7 +633,7 @@ def process_commits(repo_path, repo_owner):
     repo_name = os.path.basename(full_repo_name)
     
     # The information that we deal with all comes from git log --numstat
-    cmd = ["git", "-C", repo_path, "log", "--numstat"]
+    cmd = cmd_root + ["log", "--numstat"]
     log = subprocess.check_output(cmd).decode("utf-8").splitlines()
 
     # Get indices into the returned log for the start of each commit block

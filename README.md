@@ -80,12 +80,12 @@ environment are:
     cd check-commits
     ./install.bsh
 
-NOTE: You may need elevated priveledges to perform the install.
+NOTE: You may need elevated priveleges to perform the install.
 
 This script should put the command file into a directory that is in your
 shell's PATH, and the library module(s) in a directory that is in your Python
 installation's sys.path. You may need to modify it for your specific situation,
-and you might need to run with elevated priviledges.
+and you might need to run with elevated privileges.
 
 
 Support
