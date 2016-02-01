@@ -175,7 +175,7 @@ class CommitRec(object):
         return retval
 
     def parse_commit(self, line):
-        """Parses the "commit SHA-1" line, if possible"
+        """Parses the "commit SHA-1" line, if possible
 
         If parsing fails, there's something seriously wrong with our
         logic, so we exit with a failure status.
