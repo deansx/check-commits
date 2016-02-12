@@ -91,7 +91,7 @@ class CommitRec(object):
         file - name of the file involved in the commit. Each commit will have
                 one, or more, files associated with it.
         lines_added - number of lines added to the file as part of this commit
-        lines_deleted - number of lines added to the file as part of this
+        lines_deleted - number of lines deleted from the file as part of this
                 commit
         author - email address of the person responsible for the commit
         is_defect - whether the commit is associated with fixing a defect
